@@ -14,8 +14,19 @@ angular.module('ngSocketIO', []).factory('socket', function($rootScope) {
         }
     };
 
-    var addListener = function(name, callback) {
+    var addListener = function(name, scope, callback) {
+        if (arguments.length == 2) {
+            scope = null;
+            callback = arguments[1];
+        }
+
         socket.addListener(name, angularCallback(callback));
+
+        if (scope != null) {
+            scope.$on('$destroy', function() {
+                removeListener(name, callback);
+            });
+        }
     };
 
     var addListenerOnce = function(name, callback) {
