@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('ngSocketIO', []).factory('socket', function($rootScope) {
+angular.module('socket-io', []).factory('socket', function($rootScope) {
     var socket = io.connect();
 
     var angularCallback = function(callback) {
