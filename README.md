@@ -13,7 +13,7 @@ Simply download the `ngSocketIO.js` file and add it to your web application. Jus
 
 ## Usage
 
- 1. Add the `ngSocketIO` module as a dependency in your AngularJS app;
+ 1. Add the `socket-io` module as a dependency in your AngularJS app;
  2. Inject the `socket` factory wherever you need to use Socket.IO;
  3. You're done!
 
@@ -25,7 +25,7 @@ Simply download the `ngSocketIO.js` file and add it to your web application. Jus
         var myApp = angular.module('myApp', ['ngSocketIO']);
         myApp.controller('MyCtrl', function($scope, socket) {
             // Listening to an event
-            socket.on('someEvent', function (data) {
+            socket.on('someEvent', function(data) {
                 $scope.data = data;
             });
 
@@ -35,3 +35,11 @@ Simply download the `ngSocketIO.js` file and add it to your web application. Jus
             };
         });
     </script>
+    
+## Cancelling a subscription automatically on scope destruction
+
+If you want to unsubscribe from an event automatically on scope destruction, just pass the current scope to `on` method:
+
+    socket.on('someEvent', $scope, function(data) { 
+    ... 
+    });
