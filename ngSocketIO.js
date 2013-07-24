@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('socket-io', []).factory('socket', function($rootScope) {
+angular.module('socket-io', []).factory('socket', ['$rootScope', function($rootScope) {
     var socket = io.connect();
 
     var angularCallback = function(callback) {
@@ -53,4 +53,4 @@ angular.module('socket-io', []).factory('socket', function($rootScope) {
         removeAllListeners: removeAllListeners,
         emit: emit
     };
-});
+}]);
