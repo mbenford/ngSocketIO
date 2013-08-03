@@ -9,7 +9,7 @@ Simple Socket.IO module for AngularJS
 
 ## Installing
 
-Simply download the `ngSocketIO.js` file and add it to your web application. Just make sure it's included after the AngularJS script.
+Simply download the `ng-socket-io.js` file and add it to your web application. Just make sure it's included after the AngularJS script.
 
 ## Usage
 
@@ -20,9 +20,9 @@ Simply download the `ngSocketIO.js` file and add it to your web application. Jus
 ## Example
 
     <script src="angular.js"></script>
-    <script src="ngSocketIO.js"></script>
+    <script src="ng-socket-io.js"></script>
     <script>
-        var myApp = angular.module('myApp', ['ngSocketIO']);
+        var myApp = angular.module('myApp', ['socket-io']);
         myApp.controller('MyCtrl', function($scope, socket) {
             // Listening to an event
             socket.on('someEvent', function(data) {
