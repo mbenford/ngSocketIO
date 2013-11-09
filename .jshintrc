@@ -1,0 +1,22 @@
+{
+    "strict": true,
+    "curly": true,
+    "eqeqeq": true,
+    "immed": true,
+    "noempty": true,
+    "noarg": true,
+    "quotmark": "single",
+    "undef": true,
+    "eqnull": true,
+    "globals": {
+        "angular": true,
+        "module": true,
+        "inject": true,
+        "beforeEach": true,
+        "describe": true,
+        "it": true,
+        "expect": true,
+        "jasmine": true,
+        "spyOn": true
+    }
+}

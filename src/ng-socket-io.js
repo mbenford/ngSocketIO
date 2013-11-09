@@ -1,6 +1,7 @@
+(function() {
 'use strict';
 
-angular.module('socket-io', []).factory('socket', ['$rootScope', function($rootScope) {
+angular.module('socket-io', []).factory('socket', function($rootScope) {
     var socket = io.connect();
 
     var angularCallback = function(callback) {
@@ -15,7 +16,7 @@ angular.module('socket-io', []).factory('socket', ['$rootScope', function($rootS
     };
 
     var addListener = function(name, scope, callback) {
-        if (arguments.length == 2) {
+        if (arguments.length === 2) {
             scope = null;
             callback = arguments[1];
         }
@@ -53,4 +54,6 @@ angular.module('socket-io', []).factory('socket', ['$rootScope', function($rootS
         removeAllListeners: removeAllListeners,
         emit: emit
     };
-}]);
+});
+
+}());
