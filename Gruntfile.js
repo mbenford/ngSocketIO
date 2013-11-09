@@ -5,9 +5,12 @@ module.exports = function(grunt) {
         pkg: grunt.file.readJSON('package.json'),
         files: {
             js: {
-                src: ['src/ng-socket-io.js'],
+                src: 'src/ng-socket-io.js',
                 out: 'build/<%= pkg.name %>.js',
                 outMin: 'build/<%= pkg.name %>.min.js'
+            },
+            spec: {
+                src: 'test/ng-socket-io.spec.js'
             }
         },
         // Validates the JS file with JSHint
@@ -32,9 +35,9 @@ module.exports = function(grunt) {
         },
         // Adds AngularJS dependency injection annotations
         ngAnnotate: {
-            directives: {
+            factories: {
                 files: {
-                    '<%= files.js.out %>': ['<%= files.js.out %>']
+                    '<%= files.js.out %>': ['<%= files.js.src %>']
                 }
             }
         },

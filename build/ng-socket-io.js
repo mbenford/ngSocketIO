@@ -3,7 +3,7 @@
 
 angular.module('socket-io', []);
 
-angular.module('socket-io').factory('socket', function($rootScope, io) {
+angular.module('socket-io').factory('socket', ["$rootScope","io", function($rootScope, io) {
     var socket = io.connect();
     var callbacks = {};
 
@@ -68,7 +68,7 @@ angular.module('socket-io').factory('socket', function($rootScope, io) {
         removeAllListeners: removeAllListeners,
         emit: emit
     };
-});
+}]);
 
 angular.module('socket-io').factory('io', function() {
     return io;
