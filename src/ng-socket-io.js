@@ -2,8 +2,9 @@
 'use strict';
 
 angular.module('socket-io', []).factory('socket', function($rootScope, io) {
-    var socket = io.connect();
-    var events = {};
+    var socket = io.connect(),
+        events = {},
+        that = {};
 
     var addCallback = function(name, callback) {
         var event = events[name],
@@ -56,49 +57,40 @@ angular.module('socket-io', []).factory('socket', function($rootScope, io) {
             bindTo: function(scope) {
                 if (scope != null) {
                     scope.$on('$destroy', function() {
-                        removeListener(name, callback);
+                        that.removeListener(name, callback);
                     });
                 }
             }
         };
     };
 
-    var addListener = function(name, callback) {
-        socket.addListener(name, addCallback(name, callback));
-        return listener(name, callback);
-    };
-
-    var addListenerOnce = function(name, callback) {
-        socket.once(name, addCallback(name, callback));
-        return listener(name, callback);
-    };
-
-    var removeListener = function(name, callback) {
-        socket.removeListener(name, removeCallback(name, callback));
-    };
-
-    var removeAllListeners = function(name) {
-        socket.removeAllListeners(name);
-        removeAllCallbacks(name);
-    };
-
-    var emit = function(name, data, callback) {
-        if (callback) {
-            socket.emit(name, data, wrapCallback(callback));
-        }
-        else {
-            socket.emit(name, data);
+    that = {
+        on: function(name, callback) {
+            socket.on(name, addCallback(name, callback));
+            return listener(name, callback);
+        },
+        once: function(name, callback) {
+            socket.once(name, addCallback(name, callback));
+            return listener(name, callback);
+        },
+        removeListener: function(name, callback) {
+            socket.removeListener(name, removeCallback(name, callback));
+        },
+        removeAllListeners: function(name) {
+            socket.removeAllListeners(name);
+            removeAllCallbacks(name);
+        },
+        emit: function(name, data, callback) {
+            if (callback) {
+                socket.emit(name, data, wrapCallback(callback));
+            }
+            else {
+                socket.emit(name, data);
+            }
         }
     };
 
-    return {
-        addListener: addListener,
-        on: addListener,
-        once: addListenerOnce,
-        removeListener: removeListener,
-        removeAllListeners: removeAllListeners,
-        emit: emit
-    };
+    return that;
 })
 .factory('io', function() {
     return io;
