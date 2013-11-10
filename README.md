@@ -40,8 +40,8 @@ Simply download either `ng-socket-io` or `ng-socket-io.min.js` from the build fo
     
 ## Cancelling a subscription automatically on scope destruction
 
-If you want to unsubscribe from an event automatically on scope destruction, just pass the current scope to `on` method:
+If you want to unsubscribe from an event automatically on scope destruction, just call `bindTo` passing the current scope:
 
-    socket.on('someEvent', $scope, function(data) { 
+    socket.on('someEvent', function(data) {
     ... 
-    });
+    }).bindTo($scope);

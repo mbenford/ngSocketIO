@@ -1,54 +1,85 @@
 (function() {
 'use strict';
 
-angular.module('socket-io', []);
-
-angular.module('socket-io').factory('socket', function($rootScope, io) {
+angular.module('socket-io', []).factory('socket', function($rootScope, io) {
     var socket = io.connect();
-    var callbacks = {};
+    var events = {};
 
-    var wrapCallback = function(callback) {
-        var wrappedCallback = callbacks[callback];
-        if (!wrappedCallback) {
-            wrappedCallback = function() {
-                if (callback) {
-                    var args = arguments;
-                    $rootScope.$apply(function() {
-                        callback.apply(socket, args);
-                    });
+    var addCallback = function(name, callback) {
+        var event = events[name],
+            wrappedCallback = wrapCallback(callback);
+
+        if (!event) {
+            event = events[name] = [];
+        }
+
+        event.push({ callback: callback, wrapper: wrappedCallback });
+        return wrappedCallback;
+    };
+
+    var removeCallback = function(name, callback) {
+        var event = events[name],
+            wrappedCallback;
+
+        if (event) {
+            for(var i = event.length - 1; i >= 0; i--) {
+                if (event[i].callback === callback) {
+                    wrappedCallback = event[i].wrapper;
+                    event.slice(i, 1);
+                    break;
                 }
-            };
-            callbacks[callback] = wrappedCallback;
+            }
         }
         return wrappedCallback;
     };
 
-    var addListener = function(name, scope, callback) {
-        if (arguments.length === 2) {
-            scope = null;
-            callback = arguments[1];
-        }
+    var removeAllCallbacks = function(name) {
+        delete events[name];
+    };
 
-        socket.addListener(name, wrapCallback(callback));
+    var wrapCallback = function(callback) {
+        var wrappedCallback = angular.noop;
 
-        if (scope != null) {
-            scope.$on('$destroy', function() {
-                removeListener(name, callback);
-            });
+        if (callback) {
+            wrappedCallback = function() {
+                var args = arguments;
+                $rootScope.$apply(function() {
+                    callback.apply(socket, args);
+                });
+            };
         }
+        return wrappedCallback;
+    };
+
+    var listener = function(name, callback) {
+        return {
+            bindTo: function(scope) {
+                if (scope != null) {
+                    scope.$on('$destroy', function() {
+                        removeListener(name, callback);
+                    });
+                }
+            }
+        };
+    };
+
+    var addListener = function(name, callback) {
+        socket.addListener(name, addCallback(name, callback));
+        return listener(name, callback);
     };
 
     var addListenerOnce = function(name, callback) {
-        socket.once(name, wrapCallback(callback));
+        socket.once(name, addCallback(name, callback));
+        return listener(name, callback);
     };
 
     var removeListener = function(name, callback) {
-        socket.removeListener(name, wrapCallback(callback));
-        delete callbacks[callback];
+        socket.removeListener(name, removeCallback(name, callback));
     };
 
     var removeAllListeners = function(name) {
         socket.removeAllListeners(name);
+        removeAllCallbacks(name);
     };
 
     var emit = function(name, data, callback) {
@@ -68,9 +99,8 @@ angular.module('socket-io').factory('socket', function($rootScope, io) {
         removeAllListeners: removeAllListeners,
         emit: emit
     };
-});
-
-angular.module('socket-io').factory('io', function() {
+})
+.factory('io', function() {
     return io;
 });
 
